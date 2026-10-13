@@ -13,7 +13,7 @@ pub const timeout_ms: i64 = 1000;
 /// whether the sequence is still live. Call `reset` to abandon the
 /// current sequence and release the keyboard grab if one is held.
 pub const ChordState = struct {
-    keys: [max_chord_len]config.KeyPress = .{config.KeyPress{}} ** max_chord_len,
+    keys: [max_chord_len]config.KeyPress = @splat(config.KeyPress{}),
     index: u8 = 0,
     last_timestamp: i64 = 0,
     keyboard_grabbed: bool = false,
@@ -42,7 +42,7 @@ pub const ChordState = struct {
     /// `display` may be null only during early startup before the connection
     /// is open, in normal operation it should always be provided.
     pub fn reset(self: *ChordState, display: ?*xlib.Display) void {
-        self.keys = .{config.KeyPress{}} ** max_chord_len;
+        self.keys = @splat(config.KeyPress{});
         self.index = 0;
         self.last_timestamp = 0;
 
