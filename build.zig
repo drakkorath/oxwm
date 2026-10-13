@@ -107,7 +107,7 @@ pub fn build(b: *std.Build) void {
     kill_step.dependOn(&b.addSystemCommand(&.{ "sh", "-c", "pkill -9 Xephyr || true; pkill -9 oxwm || true" }).step);
 
     const fmt_step = b.step("fmt", "Format source files");
-    fmt_step.dependOn(&b.addFmt(.{ .paths = &.{"src/"} }).step);
+    fmt_step.dependOn(&b.addFmt(.{ .paths = &.{ b.path("src/") } }).step);
 
     const clean_step = b.step("clean", "Remove build artifacts");
     clean_step.dependOn(&b.addSystemCommand(&.{ "rm", "-rf", "zig-out", ".zig-cache" }).step);
