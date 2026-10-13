@@ -35,7 +35,7 @@ pub const KeybindOverlay = struct {
     pub fn init(display: *xlib.Display, screen: c_int, root: xlib.Window, font_name: []const u8, allocator: std.mem.Allocator) ?*KeybindOverlay {
         const overlay = allocator.create(KeybindOverlay) catch return null;
 
-        const font_name_z = allocator.dupeZ(u8, font_name) catch {
+        const font_name_z = allocator.dupeSentinel(u8, font_name, 0) catch {
             allocator.destroy(overlay);
             return null;
         };

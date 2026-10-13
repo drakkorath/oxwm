@@ -12,11 +12,11 @@ pub const Layout = struct {
 pub const Pertag = struct {
     curtag: u32 = 1,
     prevtag: u32 = 1,
-    nmasters: [13]i32 = [_]i32{1} ** 13,
-    mfacts: [13]f32 = [_]f32{0.55} ** 13,
-    sellts: [13]u32 = [_]u32{0} ** 13,
-    ltidxs: [13][6]?*const Layout = [_][6]?*const Layout{.{ null, null, null, null, null, null }} ** 13,
-    showbars: [13]bool = [_]bool{true} ** 13,
+    nmasters: [13]i32 = @splat(1),
+    mfacts: [13]f32 = @splat(0.55),
+    sellts: [13]u32 = @splat(0),
+    ltidxs: [13][6]?*const Layout = @splat(@splat(null)),
+    showbars: [13]bool = @splat(true),
 };
 
 pub const Monitor = struct {
@@ -49,7 +49,7 @@ pub const Monitor = struct {
     stack: ?*Client = null,
     next: ?*Monitor = null,
     bar_win: xlib.Window = 0,
-    lt: [6]?*const Layout = .{null} ** 6,
+    lt: [6]?*const Layout = @splat(null),
     pertag: Pertag = .{},
 };
 
