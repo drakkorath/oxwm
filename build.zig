@@ -7,6 +7,22 @@ pub fn build(b: *std.Build) void {
     const lua_dep = b.dependency("lua", .{});
     const lua_headers = lua_dep.path("src/");
 
+    // Translate C headers from src/c.h into a Zig module
+    const translate_c = b.addTranslateC(.{
+        .root_source_file = b.path("src/c.h"),
+        .target = target,
+        .optimize = optimize,
+        .link_libc = true,
+    });
+    translate_c.addIncludePath(lua_headers);
+    translate_c.addIncludePath(lua_headers);
+    translate_c.addSystemIncludePath(.{ .cwd_relative = "/usr/include/freetype2" });
+    const c_mod = translate_c.createModule();
+    c_mod.linkSystemLibrary("X11", .{});
+    c_mod.linkSystemLibrary("Xinerama", .{});
+    c_mod.linkSystemLibrary("Xft", .{});
+    c_mod.linkSystemLibrary("fontconfig", .{});
+
     const exe = b.addExecutable(.{
         .name = "oxwm",
         .root_module = b.createModule(.{
@@ -29,6 +45,8 @@ pub fn build(b: *std.Build) void {
 
     const lua = buildLua(b, lua_dep, target, optimize);
 
+    exe.root_module.addImport("c", c_mod);
+    exe.root_module.addIncludePath(lua_headers);
     exe.root_module.linkLibrary(lua);
     exe.root_module.linkSystemLibrary("X11", .{});
     exe.root_module.linkSystemLibrary("Xinerama", .{});
@@ -63,6 +81,7 @@ pub fn build(b: *std.Build) void {
         }),
     });
     src_main_unit_tests.use_lld = false;
+    src_main_unit_tests.root_module.addImport("c", c_mod);
     src_main_unit_tests.root_module.addIncludePath(lua_headers);
     src_main_unit_tests.root_module.linkLibrary(lua);
     src_main_unit_tests.root_module.linkSystemLibrary("X11", .{});
@@ -80,12 +99,14 @@ pub fn build(b: *std.Build) void {
         }),
     });
     lua_config_tests.use_lld = false;
+    lua_config_tests.root_module.addImport("c", c_mod);
     lua_config_tests.root_module.addIncludePath(lua_headers);
     const lua_config_module = b.createModule(.{
         .root_source_file = b.path("src/config/lua.zig"),
         .target = target,
         .optimize = optimize,
     });
+    lua_config_module.addImport("c", c_mod);
     lua_config_module.addIncludePath(lua_headers);
     lua_config_tests.root_module.addImport("lua", lua_config_module);
     lua_config_tests.root_module.linkLibrary(lua);
