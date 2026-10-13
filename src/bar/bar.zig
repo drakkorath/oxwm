@@ -66,7 +66,7 @@ pub const Bar = struct {
         const depth = xlib.XDefaultDepth(display, screen);
         const root = xlib.XRootWindow(display, screen);
 
-        const font_name_z = allocator.dupeZ(u8, config.font) catch {
+        const font_name_z = allocator.dupeSentinel(u8, config.font, 0) catch {
             allocator.destroy(bar);
             return null;
         };
