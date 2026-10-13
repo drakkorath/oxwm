@@ -43,7 +43,7 @@ pub const KeyPress = struct {
 };
 
 pub const Keybind = struct {
-    keys: [4]KeyPress = [_]KeyPress{.{}} ** 4,
+    keys: [4]KeyPress = @splat(.{}),
     key_count: u8 = 1,
     action: Action,
     int_arg: i32 = 0,
@@ -201,7 +201,7 @@ pub const Config = struct {
     tag_count: u32 = 9,
     layout: []const u8 = "tiling",
     attach_method: AttachMethods = .aside,
-    tag_layouts: [12]?[]const u8 = .{null} ** 12,
+    tag_layouts: [12]?[]const u8 = @splat(null),
 
     border_width: i32 = 2,
     border_focused: u32 = 0x6dade3,

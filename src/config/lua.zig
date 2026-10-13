@@ -7,11 +7,7 @@ const Rule = config_mod.Rule;
 const Block = config_mod.Block;
 const ColorScheme = config_mod.ColorScheme;
 
-const c = @cImport({
-    @cInclude("lua.h");
-    @cInclude("lauxlib.h");
-    @cInclude("lualib.h");
-});
+const c = @import("c");
 
 var L: ?*c.lua_State = null;
 var config: ?*Config = null;
@@ -43,7 +39,7 @@ pub fn loadFile(path: []const u8) bool {
     if (std.mem.lastIndexOfScalar(u8, path, '/')) |last_slash| {
         const dir = path[0..last_slash];
         var setup_buf: [600]u8 = undefined;
-        const setup_code = std.fmt.bufPrintZ(&setup_buf, "package.path = '{s}/?.lua;' .. package.path", .{dir}) catch return false;
+        const setup_code = std.fmt.bufPrintSentinel(&setup_buf, "package.path = '{s}/?.lua;' .. package.path", .{dir}, 0) catch return false;
         if (c.luaL_loadstring(state, setup_code.ptr) != 0 or c.lua_pcallk(state, 0, 0, 0, 0, null) != 0) {
             c.lua_settop(state, -2);
             return false;
