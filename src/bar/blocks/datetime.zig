@@ -1,8 +1,6 @@
 const std = @import("std");
 const format_util = @import("format.zig");
-const c = @cImport({
-    @cInclude("time.h");
-});
+const c = @import("c");
 
 pub const DateTime = struct {
     format: []const u8,
