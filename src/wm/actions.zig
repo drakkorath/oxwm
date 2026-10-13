@@ -391,7 +391,7 @@ pub fn setmfact(delta: f32, wm: *WindowManager) void {
 
 pub fn cycleLayout(wm: *WindowManager) void {
     const monitor = wm.selected_monitor orelse return;
-    const new_lt = (monitor.sel_lt + 1) % @as(u32, @intCast(std.meta.fields(config_mod.Layouts).len));
+    const new_lt = (monitor.sel_lt + 1) % @as(u32, @intCast(@typeInfo(config_mod.Layouts).@"enum".field_names.len));
     monitor.sel_lt = new_lt;
     monitor.pertag.sellts[monitor.pertag.curtag] = new_lt;
     if (new_lt != @intFromEnum(config_mod.Layouts.scrolling)) {
@@ -427,7 +427,7 @@ pub fn setLayout(layout_name: ?[]const u8, wm: *WindowManager) void {
 
 pub fn setLayoutIndex(index: u32, wm: *WindowManager) void {
     const monitor = wm.selected_monitor orelse return;
-    const lt_index = index % @as(u32, @intCast(std.meta.fields(config_mod.Layouts).len));
+    const lt_index = index % @as(u32, @intCast(@typeInfo(config_mod.Layouts).@"enum".field_names.len));
     monitor.sel_lt = lt_index;
     monitor.pertag.sellts[monitor.pertag.curtag] = lt_index;
     if (lt_index != @intFromEnum(config_mod.Layouts.scrolling)) {
